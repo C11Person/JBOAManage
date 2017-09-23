@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+
+<!-- 配置环境参数,指定Spring配置文件的位置 -->
+<context-param>
+  <param-name>contextConfigLocation</param-name>
+  <param-value>classpath:applicationContext.xml</param-value>
+</context-param>
+
+<!-- 配置Spring的ContextLoaderListener监听器,初始化Spring容器 -->
+<listener>
+  <listener-class>
+  	org.springframework.web.context.ContextLoaderListener
+  </listener-class>
+</listener>
+
+<!-- 把一个Hibernate Session 和一次完整的请求过程相绑定，
+	在请求开始时开启Session，请求结束时关闭Session
+	注意： OpenSessionInViewFilter 要配置在Struts2 核心控制器 StrtusPreparedAndExecuteFilter 的前面，
+		否则无法发挥作用 
+ -->
+ <filter>
+    <filter-name>OpenSessionInViewFilter</filter-name>
+    <filter-class>
+        org.springframework.orm.hibernate3.support.OpenSessionInViewFilter
+    </filter-class>
+</filter>
+<filter-mapping>
+    <filter-name>OpenSessionInViewFilter</filter-name>
+    <url-pattern>*.action</url-pattern>
+</filter-mapping>
+ 
+  <filter>
+    <filter-name>struts2</filter-name>
+    <filter-class>
+	  		org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter
+	  	</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>struts2</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>FORWARD</dispatcher>
+  </filter-mapping>
+  
+  
+   <filter>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <filter-class>
+			cn.jboa.filter.CharacterEncodingFilter
+		</filter-class>
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>CharacterEncodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  
+  
+  <welcome-file-list>
+    <welcome-file>login.jsp</welcome-file>
+  </welcome-file-list>
+</web-app>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<constant name="struts.enable.DynamicMethodInvocation" value="true"/>	
+	<constant name="struts.custom.i18n.resources" value="message"/>
+	<constant name="struts.i18n.encoding" value="UTF-8"/>
+	<constant name="struts.ui.theme" value="simple"/>
+	
+    <package name="default" extends="struts-default"> 
+		
+ 		<action name="login" class="employeeAction">
+			<result name="success">index.jsp</result>
+			<result name="error">login.jsp</result>
+		</action>
+		<action name="random" class="randomAction">
+			<result type="stream">
+				<param name="contentType">image/jpeg</param>
+				<param name="inputName">inputStream</param>
+			</result>
+		</action>
+         <action name="claimVoucher_searchClaimVoucher" class="claimVoucherAction" method="getAllClaimVouchers">
+         	<result name="claimvoucherlist">claim_voucher_list.jsp</result>
+         </action>
+<!--          <action name="claimVoucher_toAdd">
+         	<result type="redirectAction">claim_voucher_edit.jsp</result>
+         </action>       -->      
+		<action name="leave_searchLeave" class="leaveAction">
+		<result name="success">leave_list.jsp</result>
+		</action>
+		
+		<action name="claimVoucher_deleteClaimVoucherById" class="claimVoucherAction" method="deleteClaimVoucher">
+			<result name="success" type="redirectAction">jsp/claim/claimVoucher_searchClaimVoucher</result>
+		</action>
+		
+		<action name="leave_toEdit" class="leaveEdiAction">
+		<result name="success" >leave_edit.jsp</result>
+		</action>
+
+    </package>
+</struts>

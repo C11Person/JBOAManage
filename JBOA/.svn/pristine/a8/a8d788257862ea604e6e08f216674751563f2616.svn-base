@@ -1,0 +1,59 @@
+package cn.jboa.dao.impl;
+
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.List;
+
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.springframework.orm.hibernate3.HibernateCallback;
+import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+
+import cn.jboa.dao.LeaveDao;
+import cn.jboa.entity.Leave;
+
+public class LeaveDaoImpl extends HibernateDaoSupport implements LeaveDao {
+
+	@Override
+	public List<Leave> searchLeaves(final Leave leave, final int pageIndex, final int pageSize) {
+		// TODO Auto-generated method stub
+		String hb="from Leave l where 1=1 ";
+		if(leave!=null){
+		   if(leave.getStartTime()!=null){hb+=" and to_char(starttime,'yyyy-mm-dd') = :starttime ";}
+		   if(leave.getEndTime()!=null){hb+=" and to_char(endtime,'yyyy-mm-dd') = :endtime ";}	
+		}
+		
+	final String hql = hb;
+		return this.getHibernateTemplate().execute(
+				new HibernateCallback<List<Leave>>() {
+					public List<Leave> doInHibernate(Session session)
+							throws HibernateException, SQLException {
+						Query query = session.createQuery(hql);
+						if(leave!=null){
+							if(leave.getStartTime()!=null){query.setParameter("starttime", new SimpleDateFormat("yyyy-MM-dd").format(leave.getStartTime()));}	
+							
+							if(leave.getEndTime()!=null){
+								query.setParameter("endtime", new SimpleDateFormat("yyyy-MM-dd").format(leave.getEndTime()));
+							}
+						}
+						
+						query.setFirstResult((pageIndex - 1) * pageSize);
+						query.setMaxResults(pageSize);
+						return query.list();
+					}
+				});
+
+	}
+
+	@Override
+	public int getLeaveTotalCount(Leave leave) {
+		return ((Number) this.getHibernateTemplate()
+				.find("select count(id) from Leave l").listIterator()
+				.next()).intValue();
+
+	}
+
+	
+	
+}
